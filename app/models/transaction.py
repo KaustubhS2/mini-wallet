@@ -3,6 +3,9 @@ from app import db
 
 
 class Transaction(db.Model):
+    """
+        Transaction Model
+    """
     __tablename__ = 'transactions'
 
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()), nullable=False)

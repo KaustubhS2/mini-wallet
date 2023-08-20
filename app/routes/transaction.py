@@ -11,6 +11,9 @@ from app.utils import decode_token
 
 @wallet_bp.route('/api/v1/wallet/transactions', methods=['GET'])
 def view_transactions():
+    """
+        View transactions (deposit/withdraw)
+    """
     token = request.headers.get('Authorization').split(' ')[1]
     decoded_data = decode_token(token)
 
@@ -42,6 +45,9 @@ def view_transactions():
 
 @wallet_bp.route('/api/v1/wallet/deposits', methods=['POST'])
 def add_deposit():
+    """
+        Add money to wallet
+    """
     token = request.headers.get('Authorization').split(' ')[1]
     decoded_data = decode_token(token)
 
@@ -88,6 +94,9 @@ def add_deposit():
 
 @wallet_bp.route('/api/v1/wallet/withdrawals', methods=['POST'])
 def make_withdrawal():
+    """
+        Make withdrawals from wallet
+    """
     token = request.headers.get('Authorization').split(' ')[1]
     decoded_data = decode_token(token)
 

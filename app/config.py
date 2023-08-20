@@ -1,4 +1,7 @@
 class Config:
+    """
+        Config class : DB, SK
+    """
     # Database configuration
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:smartpay@127.0.0.1:3306/miniwallet'
     SQLALCHEMY_TRACK_MODIFICATIONS = False  # Disable modification tracking

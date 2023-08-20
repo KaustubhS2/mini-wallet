@@ -11,6 +11,9 @@ wallet_bp = Blueprint('wallet', __name__)
 
 @wallet_bp.route('/api/v1/wallet', methods=['POST'])
 def enable_wallet():
+    """
+        Enable wallet
+    """
     token = request.headers.get('Authorization').split(' ')[1]
     decoded_data = decode_token(token)
 
@@ -63,6 +66,9 @@ def enable_wallet():
 
 @wallet_bp.route('/api/v1/wallet', methods=['GET'])
 def view_balance():
+    """
+        View wallet balance
+    """
     token = request.headers.get('Authorization').split(' ')[1]
     decoded_data = decode_token(token)
 
@@ -92,6 +98,9 @@ def view_balance():
 
 @wallet_bp.route('/api/v1/wallet', methods=['PATCH'])
 def disable_wallet():
+    """
+        Disable wallet
+    """
     token = request.headers.get('Authorization').split(' ')[1]
     decoded_data = decode_token(token)
 

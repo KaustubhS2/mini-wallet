@@ -3,6 +3,9 @@ from app import db
 
 
 class Wallet(db.Model):
+    """
+        Wallet Model
+    """
     __tablename__ = 'wallets'
 
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()), nullable=False)
