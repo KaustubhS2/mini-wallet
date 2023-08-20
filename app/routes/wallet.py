@@ -1,22 +1,12 @@
 from datetime import datetime
 
-from flask import Blueprint, jsonify, request, current_app
-from app.models.wallet import Wallet
+from flask import Blueprint, jsonify, request
+
 from app import db
+from app.models.wallet import Wallet
+from app.utils import decode_token
 
 wallet_bp = Blueprint('wallet', __name__)
-
-from itsdangerous import URLSafeTimedSerializer as Serializer
-
-
-def decode_token(token):
-    secret_key = current_app.config['SECRET_KEY']
-    token_serializer = Serializer(secret_key)
-    try:
-        decoded_data = token_serializer.loads(token)
-        return decoded_data
-    except Exception as e:
-        return None
 
 
 @wallet_bp.route('/api/v1/wallet', methods=['POST'])
@@ -83,8 +73,8 @@ def view_balance():
 
     wallet = Wallet.query.filter_by(owned_by=customer_xid).first()
 
-    if not wallet:
-        return jsonify({'status': 'error', 'message': 'Wallet not found'}), 404
+    if not wallet or wallet.status != 'enabled':
+        return jsonify({'status': 'fail', 'data': {'error': 'Wallet disabled'}}), 400
 
     wallet_data = {
         'id': wallet.id,

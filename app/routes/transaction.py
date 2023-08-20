@@ -1,22 +1,12 @@
 from datetime import datetime
 
-from flask import jsonify, request, current_app
-from itsdangerous import URLSafeTimedSerializer as Serializer
+from flask import jsonify, request
 
 from app import db
 from app.models.transaction import Transaction
 from app.models.wallet import Wallet
 from app.routes.wallet import wallet_bp
-
-
-def decode_token(token):
-    secret_key = current_app.config['SECRET_KEY']
-    token_serializer = Serializer(secret_key)
-    try:
-        decoded_data = token_serializer.loads(token)
-        return decoded_data
-    except Exception as e:
-        return None
+from app.utils import decode_token
 
 
 @wallet_bp.route('/api/v1/wallet/transactions', methods=['GET'])
@@ -65,15 +55,15 @@ def add_deposit():
     amount = float(request.form.get('amount'))
     reference_id = request.form.get('reference_id')
 
-    existing_transaction = Transaction.query.filter_by(reference_id=reference_id).first()
-
-    if existing_transaction:
-        return jsonify({'status': 'fail', 'data': {'error': 'Reference ID already used'}}), 400
-
     wallet = Wallet.query.filter_by(owned_by=user_id).first()
 
     if not wallet or wallet.status != 'enabled':
         return jsonify({'status': 'fail', 'data': {'error': 'Wallet disabled'}}), 400
+
+    existing_transaction = Transaction.query.filter_by(reference_id=reference_id).first()
+
+    if existing_transaction:
+        return jsonify({'status': 'fail', 'data': {'error': 'Reference ID already used'}}), 400
 
     new_transaction = Transaction(user_id, status, transacted_at, type, amount, reference_id)
     db.session.add(new_transaction)
@@ -111,14 +101,14 @@ def make_withdrawal():
     amount = float(request.form.get('amount'))
     reference_id = request.form.get('reference_id')
 
-    existing_transaction = Transaction.query.filter_by(reference_id=reference_id).first()
-    if existing_transaction:
-        return jsonify({'status': 'fail', 'data': {'error': 'Reference ID already used'}}), 400
-
     wallet = Wallet.query.filter_by(owned_by=user_id).first()
 
     if not wallet or wallet.status != 'enabled':
         return jsonify({'status': 'fail', 'data': {'error': 'Wallet disabled'}}), 400
+
+    existing_transaction = Transaction.query.filter_by(reference_id=reference_id).first()
+    if existing_transaction:
+        return jsonify({'status': 'fail', 'data': {'error': 'Reference ID already used'}}), 400
 
     if wallet.balance < amount:
         return jsonify({'status': 'fail', 'data': {'error': 'Insufficient balance'}}), 400
